@@ -1,5 +1,5 @@
 /env
-.vscode/
-config.py
 __pycache__/
+.vscode/
+egg_timer.py
 config2.py
