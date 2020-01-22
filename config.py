@@ -1,3 +1,5 @@
-API_KEY = ''
+import os
 
-CHAT_ID = ''
+API_KEY = os.getenv('TELEGRAM_API_KEY')
+
+CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
