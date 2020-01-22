@@ -1,6 +1,6 @@
+import os
 from pytimeparse import parse
 
-import config
 import ptbot
 
 
@@ -8,9 +8,9 @@ def notify_progress(secs_left, message_id, total_seconds):
     if secs_left > 0:
         progressbar = render_progressbar(total_seconds, secs_left)
         name = "Осталось {0} секунд\n{1}".format(secs_left, progressbar)
-        bot.update_message(config.CHAT_ID, message_id, name)
+        bot.update_message(CHAT_ID, message_id, name)
     else:
-        bot.update_message(config.CHAT_ID, message_id, 'Время вышло!')
+        bot.update_message(CHAT_ID, message_id, 'Время вышло!')
 
 
 def render_progressbar(
@@ -28,7 +28,7 @@ def render_progressbar(
 def reply_msg(text):
     seconds = parse(text)
     message_id = bot.send_message(
-        config.CHAT_ID,
+        CHAT_ID,
         'Таймер запущен на {} секунд'.format(seconds),
         )
     bot.create_countdown(
@@ -37,7 +37,10 @@ def reply_msg(text):
         total_seconds=seconds)
 
 
-bot = ptbot.Bot(config.API_KEY)
-bot.send_message(config.CHAT_ID, 'Привет!')
-bot.send_message(config.CHAT_ID, 'На сколько запустить таймер?')
+API_KEY = str(os.getenv('TELEGRAM_API_KEY'))
+CHAT_ID = str(os.getenv('TELEGRAM_CHAT_ID'))
+
+bot = ptbot.Bot(API_KEY)
+bot.send_message(CHAT_ID, 'Привет!')
+bot.send_message(CHAT_ID, 'На сколько запустить таймер?')
 bot.wait_for_msg(reply_msg)
