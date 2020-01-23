@@ -4,13 +4,18 @@ from pytimeparse import parse
 import ptbot
 
 
+API_KEY = os.getenv('TELEGRAM_API_KEY')
+CHAT_ID = os.getenv('TELEGRAM_CHAT_ID')
+
+
+def notify_finish():
+    bot.send_message(CHAT_ID, 'Время вышло!')
+
+
 def notify_progress(secs_left, message_id, total_seconds):
-    if secs_left > 0:
-        progressbar = render_progressbar(total_seconds, secs_left)
-        name = "Осталось {0} секунд\n{1}".format(secs_left, progressbar)
-        bot.update_message(CHAT_ID, message_id, name)
-    else:
-        bot.update_message(CHAT_ID, message_id, 'Время вышло!')
+    progressbar = render_progressbar(total_seconds, secs_left)
+    name = "Осталось {0} секунд\n{1}".format(secs_left, progressbar)
+    bot.update_message(CHAT_ID, message_id, name)
 
 
 def render_progressbar(
@@ -35,12 +40,17 @@ def reply_msg(text):
         seconds, notify_progress,
         message_id=message_id,
         total_seconds=seconds)
+    bot.create_timer(
+        seconds, notify_finish)
 
 
-API_KEY = str(os.getenv('TELEGRAM_API_KEY'))
-CHAT_ID = str(os.getenv('TELEGRAM_CHAT_ID'))
+def launch_bot():
+    bot.send_message(CHAT_ID, 'Привет!')
+    bot.send_message(CHAT_ID, 'На сколько запустить таймер?')
+    bot.reply_on_message(reply_msg)
+    bot.run_bot()
 
-bot = ptbot.Bot(API_KEY)
-bot.send_message(CHAT_ID, 'Привет!')
-bot.send_message(CHAT_ID, 'На сколько запустить таймер?')
-bot.wait_for_msg(reply_msg)
+
+if __name__ == '__main__':
+    bot = ptbot.Bot(API_KEY)
+    launch_bot()
